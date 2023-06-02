@@ -38,7 +38,7 @@ const createId = () => {};
  */
 export const state =  { 
         tasks: {},
-        displaying: [],
+         displaying: [],
 
         filters: {
             search: "",
