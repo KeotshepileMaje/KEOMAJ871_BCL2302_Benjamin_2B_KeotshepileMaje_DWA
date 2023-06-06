@@ -36,11 +36,11 @@ const calculatedAnswer = (event) => {
             console.error(error);
             // Display an error message to the user
             result.innerText = 'Something critical went wrong. Please reload the page';
-            submitButton.disabled = true;
-            inputField.forEach(input => {
-                input.disabled = true;
-            });
-            // content.style.display = 'none'
+            // submitButton.disabled = true;
+            // inputField.forEach(input => {
+            //     input.disabled = true;
+            // });
+            content.style.display = 'none'
 
             return
         }
