@@ -19,21 +19,28 @@ const calculatedAnswer = (event) => {
         return
     }
     if (calculated < 0) {
-        throw new Error ('Division not performed. Invalid number provided. Try again')        
+        try{
+            throw new Error ('Division not performed. Invalid number provided. Try again') 
+        } catch (error) {
+            console.error(error)
+            result.innerText = 'Division not performed. Invalid number provided. Try again'
+
+            return
+        }   
     }
 
     if (isNaN(calculated) || isNaN(dividend) || isNaN(divider)) {
         try {
-            throw new Error('Something critical went wrong.');
+            throw new Error ('Something critical went wrong.');
         } catch (error) {
             console.error(error);
             // Display an error message to the user
             result.innerText = 'Something critical went wrong. Please reload the page';
-            // submitButton.disabled = true;
-            // inputField.forEach(input => {
-            //     input.disabled = true;
-            // });
-            content.style.display = 'none'
+            submitButton.disabled = true;
+            inputField.forEach(input => {
+                input.disabled = true;
+            });
+            // content.style.display = 'none'
 
             return
         }
