@@ -27,7 +27,7 @@ const calculatedAnswer = (event) => {
         }   
     }
 
-    if (isNaN(calculated) || isNaN(dividend) || isNaN(divider)) {
+    if ( isNaN(dividend) || isNaN(divider)) {
         try {
             throw new Error ('Something critical went wrong.');
         } catch (error) {
@@ -38,8 +38,7 @@ const calculatedAnswer = (event) => {
             return
         }
     }
-   result.innerText = calculated;    
-  
+   result.innerText = calculated;     
 }
 
 form.addEventListener("submit", calculatedAnswer); 
