@@ -108,6 +108,7 @@ let displayBooks = () => {
     list_items.appendChild(fragment)
 }
 
+//Add the first 36 books
 displayBooks()
 page += 1
 
@@ -207,8 +208,8 @@ search_form.addEventListener('submit', (event) => {
             result.push(book)
         }
     }
-
-    page = 1;
+   
+    page = 0;
     matches = result
 
     if (result.length < 1) {
@@ -218,29 +219,11 @@ search_form.addEventListener('submit', (event) => {
     }
 
     list_items.innerHTML = ''
-    const newItems = document.createDocumentFragment()
+    displayBooks()
+    list_items.appendChild(fragment)
 
-    for (const { author, id, image, title } of result.slice(0, BOOKS_PER_PAGE)) {
-        const element = document.createElement('button')
-        element.classList = 'preview'
-        element.setAttribute('data-preview', id)
-    
-        element.innerHTML = `
-            <img
-                class="preview__image"
-                src="${image}"
-            />
-            
-            <div class="preview__info">
-                <h3 class="preview__title">${title}</h3>
-                <div class="preview__author">${authors[author]}</div>
-            </div>
-        `
+    page += 1
 
-        newItems.appendChild(element)
-    }
-
-    list_items.appendChild(newItems)
     list_button.disabled = (matches.length - (page * BOOKS_PER_PAGE)) < 1
 
     list_button.innerHTML = `
