@@ -1,4 +1,4 @@
-import { books, authors, genres, BOOKS_PER_PAGE } from './data.js'
+import { books, authors, genres, BOOKS_PER_PAGE } from './module/data.js'
 
 import { 
         header_search,
@@ -25,83 +25,7 @@ import {
         settings_form,
         settings_theme,
         settings_cancel
-    } from './html_references.js'
-
-
-let page = 1;
-let matches = books
-
-const starting = document.createDocumentFragment()
-
-for (const { author, id, image, title } of matches.slice(0, BOOKS_PER_PAGE)) {
-    const element = document.createElement('button')
-    element.classList = 'preview'
-    element.setAttribute('data-preview', id)
-
-    element.innerHTML = `
-        <img
-            class="preview__image"
-            src="${image}"
-        />
-        
-        <div class="preview__info">
-            <h3 class="preview__title">${title}</h3>
-            <div class="preview__author">${authors[author]}</div>
-        </div>
-    `
-
-    starting.appendChild(element)
-}
-
-list_items.appendChild(starting)
-
-const genreHtml = document.createDocumentFragment()
-const firstGenreElement = document.createElement('option')
-firstGenreElement.value = 'any'
-firstGenreElement.innerText = 'All Genres'
-genreHtml.appendChild(firstGenreElement)
-
-for (const [id, name] of Object.entries(genres)) {
-    const element = document.createElement('option')
-    element.value = id
-    element.innerText = name
-    genreHtml.appendChild(element)
-}
-
-search_genres.appendChild(genreHtml)
-
-const authorsHtml = document.createDocumentFragment()
-const firstAuthorElement = document.createElement('option')
-firstAuthorElement.value = 'any'
-firstAuthorElement.innerText = 'All Authors'
-authorsHtml.appendChild(firstAuthorElement)
-
-for (const [id, name] of Object.entries(authors)) {
-    const element = document.createElement('option')
-    element.value = id
-    element.innerText = name
-    authorsHtml.appendChild(element)
-}
-
-search_authors.appendChild(authorsHtml)
-
-if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    settings_theme.value = 'night'
-    document.documentElement.style.setProperty('--color-dark', '255, 255, 255');
-    document.documentElement.style.setProperty('--color-light', '10, 10, 20');
-} else {
-    settings_theme.value = 'day'
-    document.documentElement.style.setProperty('--color-dark', '10, 10, 20');
-    document.documentElement.style.setProperty('--color-light', '255, 255, 255');
-}
-
-list_button.innerText = `Show more (${books.length - BOOKS_PER_PAGE})`
-list_button.disabled = (matches.length - (page * BOOKS_PER_PAGE)) > 0
-
-list_button.innerHTML = `
-    <span>Show more</span>
-    <span class="list__remaining"> (${(matches.length - (page * BOOKS_PER_PAGE)) > 0 ? (matches.length - (page * BOOKS_PER_PAGE)) : 0})</span>
-`
+    } from './module/html_references.js'
 
 search_cancel.addEventListener('click', () => {
     search_overlay.open = false
@@ -122,7 +46,19 @@ header_settings.addEventListener('click', () => {
 
 list_close.addEventListener('click', () => {
     list_active.open = false
-})
+})   
+
+
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    settings_theme.value = 'night'
+    document.documentElement.style.setProperty('--color-dark', '255, 255, 255');
+    document.documentElement.style.setProperty('--color-light', '10, 10, 20');
+} else {
+    settings_theme.value = 'day'
+    document.documentElement.style.setProperty('--color-dark', '10, 10, 20');
+    document.documentElement.style.setProperty('--color-light', '255, 255, 255');
+}
+
 
 settings_form.addEventListener('submit', (event) => {
     event.preventDefault()
@@ -139,6 +75,116 @@ settings_form.addEventListener('submit', (event) => {
     
     settings_overlay.open = false
 })
+
+
+let page = 0;
+let matches = books
+
+const fragment = document.createDocumentFragment()
+/**
+ * This function is used to display the 36 books at the time
+ */
+let displayBooks = () => {
+    for (const { author, id, image, title } of matches.slice(page * BOOKS_PER_PAGE, (page + 1) * BOOKS_PER_PAGE)) {
+        const element = document.createElement('button')
+        element.classList = 'preview'
+        element.setAttribute('data-preview', id)
+
+        element.innerHTML = `
+            <img
+                class="preview__image"
+                src="${image}"
+            />
+            
+            <div class="preview__info">
+                <h3 class="preview__title">${title}</h3>
+                <div class="preview__author">${authors[author]}</div>
+            </div>
+        `
+
+        fragment.appendChild(element)
+    }
+
+    list_items.appendChild(fragment)
+}
+
+displayBooks()
+page += 1
+
+list_button.innerText = `Show more (${books.length - BOOKS_PER_PAGE})`
+list_button.disabled = (matches.length - (page * BOOKS_PER_PAGE)) < 0
+
+list_button.innerHTML = `
+    <span>Show more</span>
+    <span class="list__remaining"> (${(matches.length - (page * BOOKS_PER_PAGE)) > 0 ? (matches.length - (page * BOOKS_PER_PAGE)) : 0})</span>
+`
+
+list_button.addEventListener('click', () => {
+    displayBooks()
+    page += 1
+})
+
+
+list_items.addEventListener('click', (event) => {
+    const pathArray = Array.from(event.path || event.composedPath())
+    let active = null
+
+    for (const node of pathArray) {
+        if (active) break
+
+        if (node?.dataset?.preview) {
+            let result = null
+    
+            for (const singleBook of books) {
+                if (result) break;
+                if (singleBook.id === node?.dataset?.preview) result = singleBook
+            } 
+        
+            active = result
+        }
+    }
+  
+    if (active) {
+        list_active.open = true
+        list_blur.src = active.image
+        list_image.src = active.image
+        list_title.innerText = active.title
+        list_subtitle.innerText = `${authors[active.author]} (${new Date(active.published).getFullYear()})`
+        list_description.innerText = active.description
+    }
+})
+
+const optionFragment = document.createDocumentFragment()
+
+/**
+ * This function create options on the form for users to choose which books
+ * to read.
+ * @param {string} - the parameter should only be 'genres' or 'authors'
+ */
+
+let createOption = (param) => {
+const firstElement = document.createElement('option')
+firstElement.value = 'any'
+firstElement.innerText = 'All Genres'
+optionFragment.appendChild(firstElement)
+
+for (const [id, name] of Object.entries(param)) {
+    const element = document.createElement('option')
+    element.value = id
+    element.innerText = name
+    optionFragment.appendChild(element)
+}
+
+}
+
+//Call the function to create options for genres
+createOption(genres)
+search_genres.appendChild(optionFragment)
+
+//Call the function to create options for authors
+createOption(authors)
+search_authors.appendChild(optionFragment)
+
 search_form.addEventListener('submit', (event) => {
     event.preventDefault()
     const formData = new FormData(event.target)
@@ -204,60 +250,4 @@ search_form.addEventListener('submit', (event) => {
 
     window.scrollTo({top: 0, behavior: 'smooth'});
     search_overlay.open = false
-})
-
-list_button.addEventListener('click', () => {
-    const fragment = document.createDocumentFragment()
-
-    for (const { author, id, image, title } of matches.slice(page * BOOKS_PER_PAGE, (page + 1) * BOOKS_PER_PAGE)) {
-        const element = document.createElement('button')
-        element.classList = 'preview'
-        element.setAttribute('data-preview', id)
-    
-        element.innerHTML = `
-            <img
-                class="preview__image"
-                src="${image}"
-            />
-            
-            <div class="preview__info">
-                <h3 class="preview__title">${title}</h3>
-                <div class="preview__author">${authors[author]}</div>
-            </div>
-        `
-
-        fragment.appendChild(element)
-    }
-
-    list_items.appendChild(fragment)
-    page += 1
-})
-
-list_items.addEventListener('click', (event) => {
-    const pathArray = Array.from(event.path || event.composedPath())
-    let active = null
-
-    for (const node of pathArray) {
-        if (active) break
-
-        if (node?.dataset?.preview) {
-            let result = null
-    
-            for (const singleBook of books) {
-                if (result) break;
-                if (singleBook.id === node?.dataset?.preview) result = singleBook
-            } 
-        
-            active = result
-        }
-    }
-  
-    if (active) {
-        list_active.open = true
-        list_blur.src = active.image
-        list_image.src = active.image
-        list_title.innerText = active.title
-        list_subtitle.innerText = `${authors[active.author]} (${new Date(active.published).getFullYear()})`
-        list_description.innerText = active.description
-    }
 })
