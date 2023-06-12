@@ -1,66 +1,66 @@
 import { books, authors, genres, BOOKS_PER_PAGE } from './module/data.js'
 
-import { 
-        header_search,
-        header_settings,
+import {
+        headerSearch,
+        headerSettings,
 
-        list_items,
-        list_message,
-        list_button,
-        list_active,
-        list_blur,
-        list_image,
-        list_title,
-        list_subtitle,
-        list_description,
-        list_close,
+        listItems,
+        listMessage,
+        listButton,
+        listActive,
+        listBlur,
+        listImage,
+        listTitle,
+        listSubtitle,
+        listDescription,
+        listClose,
 
-        search_overlay,
-        search_form,
-        search_title,
-        search_genres,
-        search_authors,
-        search_cancel,
-        settings_overlay,
-        settings_form,
-        settings_theme,
-        settings_cancel
+        searchOverlay,
+        searchForm,
+        searchTitle,
+        searchGenres,
+        searchAuthors,
+        searchCancel,
+        settingsOverlay,
+        settingsForm,
+        settingsTheme,
+        settingsCancel
     } from './module/html_references.js'
 
-search_cancel.addEventListener('click', () => {
-    search_overlay.open = false
+searchCancel.addEventListener('click', () => {
+    searchOverlay.open = false
 })
 
-settings_cancel.addEventListener('click', () => {
-    settings_overlay.open = false
+settingsCancel.addEventListener('click', () => {
+    settingsOverlay.open = false
 })
 
-header_search.addEventListener('click', () => {
-    search_overlay.open = true 
-    search_title.focus()
+headerSearch.addEventListener('click', () => {
+    searchOverlay.open = true 
+    searchTitle.focus()
 })
 
-header_settings.addEventListener('click', () => {
-    settings_overlay.open = true 
+headerSettings.addEventListener('click', () => {
+    settingsOverlay.open = true 
 })
 
-list_close.addEventListener('click', () => {
-    list_active.open = false
+listClose.addEventListener('click', () => {
+    listActive.open = false
 })   
 
 
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    settings_theme.value = 'night'
+    settingsTheme.value = 'night'
     document.documentElement.style.setProperty('--color-dark', '255, 255, 255');
     document.documentElement.style.setProperty('--color-light', '10, 10, 20');
 } else {
-    settings_theme.value = 'day'
+    settingsTheme.value = 'day'
     document.documentElement.style.setProperty('--color-dark', '10, 10, 20');
     document.documentElement.style.setProperty('--color-light', '255, 255, 255');
 }
 
 
-settings_form.addEventListener('submit', (event) => {
+settingsForm.addEventListener('submit', (event) => {
     event.preventDefault()
     const formData = new FormData(event.target)
     const { theme } = Object.fromEntries(formData)
@@ -73,7 +73,7 @@ settings_form.addEventListener('submit', (event) => {
         document.documentElement.style.setProperty('--color-light', '255, 255, 255');
     }
     
-    settings_overlay.open = false
+    settingsOverlay.open = false
 })
 
 
@@ -105,28 +105,31 @@ let displayBooks = () => {
         fragment.appendChild(element)
     }
 
-    list_items.appendChild(fragment)
+    listItems.appendChild(fragment)
 }
 
 //Add the first 36 books
 displayBooks()
 page += 1
 
-list_button.innerText = `Show more (${books.length - BOOKS_PER_PAGE})`
-list_button.disabled = (matches.length - (page * BOOKS_PER_PAGE)) < 0
+listButton.innerText = `Show more (${books.length - BOOKS_PER_PAGE})`
+listButton.disabled = (matches.length - (page * BOOKS_PER_PAGE)) < 0
 
-list_button.innerHTML = `
-    <span>Show more</span>
-    <span class="list__remaining"> (${(matches.length - (page * BOOKS_PER_PAGE)) > 0 ? (matches.length - (page * BOOKS_PER_PAGE)) : 0})</span>
-`
+const showMoreButton = () => {
 
-list_button.addEventListener('click', () => {
+    listButton.innerHTML = `
+        <span>Show more</span>
+        <span class="list__remaining"> (${(matches.length - (page * BOOKS_PER_PAGE)) > 0 ? (matches.length - (page * BOOKS_PER_PAGE)) : 0})</span>
+    `
+}
+listButton.addEventListener('click', () => {
     displayBooks()
     page += 1
+    showMoreButton()
 })
+showMoreButton()
 
-
-list_items.addEventListener('click', (event) => {
+listItems.addEventListener('click', (event) => {
     const pathArray = Array.from(event.path || event.composedPath())
     let active = null
 
@@ -146,12 +149,12 @@ list_items.addEventListener('click', (event) => {
     }
   
     if (active) {
-        list_active.open = true
-        list_blur.src = active.image
-        list_image.src = active.image
-        list_title.innerText = active.title
-        list_subtitle.innerText = `${authors[active.author]} (${new Date(active.published).getFullYear()})`
-        list_description.innerText = active.description
+        listActive.open = true
+        listBlur.src = active.image
+        listImage.src = active.image
+        listTitle.innerText = active.title
+        listSubtitle.innerText = `${authors[active.author]} (${new Date(active.published).getFullYear()})`
+        listDescription.innerText = active.description
     }
 })
 
@@ -164,29 +167,29 @@ const optionFragment = document.createDocumentFragment()
  */
 
 let createOption = (param) => {
-const firstElement = document.createElement('option')
-firstElement.value = 'any'
-firstElement.innerText = 'All Genres'
-optionFragment.appendChild(firstElement)
+    const firstElement = document.createElement('option')
+    firstElement.value = 'any'
+    firstElement.innerText = 'All Genres'
+    optionFragment.appendChild(firstElement)
 
-for (const [id, name] of Object.entries(param)) {
-    const element = document.createElement('option')
-    element.value = id
-    element.innerText = name
-    optionFragment.appendChild(element)
-}
+    for (const [id, name] of Object.entries(param)) {
+        const element = document.createElement('option')
+        element.value = id
+        element.innerText = name
+        optionFragment.appendChild(element)
+    }
 
 }
 
 //Call the function to create options for genres
 createOption(genres)
-search_genres.appendChild(optionFragment)
+searchGenres.appendChild(optionFragment)
 
 //Call the function to create options for authors
 createOption(authors)
-search_authors.appendChild(optionFragment)
+searchAuthors.appendChild(optionFragment)
 
-search_form.addEventListener('submit', (event) => {
+searchForm.addEventListener('submit', (event) => {
     event.preventDefault()
     const formData = new FormData(event.target)
     const filters = Object.fromEntries(formData)
@@ -213,24 +216,21 @@ search_form.addEventListener('submit', (event) => {
     matches = result
 
     if (result.length < 1) {
-        list_message.classList.add('list__message_show')
+        listMessage.classList.add('list__message_show')
     } else {
-        list_message.classList.remove('list__message_show')
+        listMessage.classList.remove('list__message_show')
     }
 
-    list_items.innerHTML = ''
+    listItems.innerHTML = ''
     displayBooks()
-    list_items.appendChild(fragment)
+    listItems.appendChild(fragment)
 
     page += 1
 
-    list_button.disabled = (matches.length - (page * BOOKS_PER_PAGE)) < 1
+    listButton.disabled = (matches.length - (page * BOOKS_PER_PAGE)) < 0
 
-    list_button.innerHTML = `
-        <span>Show more</span>
-        <span class="list__remaining"> (${(matches.length - (page * BOOKS_PER_PAGE)) > 0 ? (matches.length - (page * BOOKS_PER_PAGE)) : 0})</span>
-    `
+    showMoreButton()
 
     window.scrollTo({top: 0, behavior: 'smooth'});
-    search_overlay.open = false
+    searchOverlay.open = false
 })
