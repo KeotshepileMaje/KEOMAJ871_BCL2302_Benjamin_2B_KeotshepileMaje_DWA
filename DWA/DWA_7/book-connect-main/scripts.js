@@ -25,29 +25,7 @@ import {
         settingsForm,
         settingsTheme,
         settingsCancel
-    } from './module/html_references.js'
-
-searchCancel.addEventListener('click', () => {
-    searchOverlay.open = false
-})
-
-settingsCancel.addEventListener('click', () => {
-    settingsOverlay.open = false
-})
-
-headerSearch.addEventListener('click', () => {
-    searchOverlay.open = true 
-    searchTitle.focus()
-})
-
-headerSettings.addEventListener('click', () => {
-    settingsOverlay.open = true 
-})
-
-listClose.addEventListener('click', () => {
-    listActive.open = false
-})   
-
+} from './module/html_references.js'
 
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     settingsTheme.value = 'night'
@@ -112,22 +90,30 @@ let displayBooks = () => {
 displayBooks()
 page += 1
 
-listButton.innerText = `Show more (${books.length - BOOKS_PER_PAGE})`
-listButton.disabled = (matches.length - (page * BOOKS_PER_PAGE)) < 0
+let remainingBooks = (matches.length - (page * BOOKS_PER_PAGE))
+listButton.disabled = remainingBooks < 0
 
 const showMoreButton = () => {
 
+    remainingBooks = (matches.length - (page * BOOKS_PER_PAGE))
+    
     listButton.innerHTML = `
         <span>Show more</span>
-        <span class="list__remaining"> (${(matches.length - (page * BOOKS_PER_PAGE)) > 0 ? (matches.length - (page * BOOKS_PER_PAGE)) : 0})</span>
+        <span class="list__remaining"> (${ remainingBooks > 0 ? remainingBooks : 0})</span>
     `
 }
-listButton.addEventListener('click', () => {
+
+// Call the function to display the of books that still to be explored.
+showMoreButton()
+
+export let clickButtonForMOreBooks = () => {
     displayBooks()
     page += 1
     showMoreButton()
-})
-showMoreButton()
+}
+
+listButton.addEventListener('click', clickButtonForMOreBooks)
+
 
 listItems.addEventListener('click', (event) => {
     const pathArray = Array.from(event.path || event.composedPath())
@@ -147,7 +133,7 @@ listItems.addEventListener('click', (event) => {
             active = result
         }
     }
-  
+
     if (active) {
         listActive.open = true
         listBlur.src = active.image
@@ -158,36 +144,42 @@ listItems.addEventListener('click', (event) => {
     }
 })
 
-const optionFragment = document.createDocumentFragment()
+import { optionsForAuthors, optionsForGenres } from './module/domManipulator.js'
 
-/**
- * This function create options on the form for users to choose which books
- * to read.
- * @param {string} - the parameter should only be 'genres' or 'authors'
- */
+optionsForAuthors
+optionsForGenres
 
-let createOption = (param) => {
-    const firstElement = document.createElement('option')
-    firstElement.value = 'any'
-    firstElement.innerText = 'All Genres'
-    optionFragment.appendChild(firstElement)
 
-    for (const [id, name] of Object.entries(param)) {
-        const element = document.createElement('option')
-        element.value = id
-        element.innerText = name
-        optionFragment.appendChild(element)
-    }
 
-}
 
-//Call the function to create options for genres
-createOption(genres)
-searchGenres.appendChild(optionFragment)
 
-//Call the function to create options for authors
-createOption(authors)
-searchAuthors.appendChild(optionFragment)
+
+searchCancel.addEventListener('click', () => {
+    searchOverlay.open = false
+})
+
+settingsCancel.addEventListener('click', () => {
+    settingsOverlay.open = false
+})
+
+headerSearch.addEventListener('click', () => {
+    searchOverlay.open = true 
+    searchTitle.focus()
+})
+
+headerSettings.addEventListener('click', () => {
+    settingsOverlay.open = true 
+})
+
+listClose.addEventListener('click', () => {
+    listActive.open = false
+})   
+
+
+
+
+
+
 
 searchForm.addEventListener('submit', (event) => {
     event.preventDefault()
