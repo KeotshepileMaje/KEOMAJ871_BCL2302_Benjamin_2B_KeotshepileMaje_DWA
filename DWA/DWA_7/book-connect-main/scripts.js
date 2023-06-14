@@ -66,8 +66,12 @@ let matches = books
 
 const fragment = document.createDocumentFragment()
 
-const createHTML = ({id, image, title, author}) => {
-const element = document.createElement('button')
+/**
+ * This function is used to display the 36 books at the time
+ */
+let displayBooks = () => {
+    for (const { author, id, image, title } of matches.slice(page * BOOKS_PER_PAGE, (page + 1) * BOOKS_PER_PAGE)) {
+        const element = document.createElement('button')
         element.classList = 'preview'
         element.setAttribute('data-preview', id)
 
@@ -84,13 +88,6 @@ const element = document.createElement('button')
         `
 
         fragment.appendChild(element)
-}
-/**
- * This function is used to display the 36 books at the time
- */
-let displayBooks = () => {
-    for (const { author, id, image, title } of matches.slice(page * BOOKS_PER_PAGE, (page + 1) * BOOKS_PER_PAGE)) {
-        createHTML()
     }
 
     listItems.appendChild(fragment)
