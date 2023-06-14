@@ -54,15 +54,8 @@ settingsForm.addEventListener('submit', (event) => {
     settingsOverlay.open = false
 })
 
-
 let page = 0;
 let matches = books
-
-
-
-
-
-
 
 const fragment = document.createDocumentFragment()
 

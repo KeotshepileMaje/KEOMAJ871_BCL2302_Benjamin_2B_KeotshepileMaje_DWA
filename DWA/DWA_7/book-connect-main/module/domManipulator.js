@@ -42,7 +42,7 @@ const optionFragment = document.createDocumentFragment()
 let createOption = (param) => {
     const firstElement = document.createElement('option')
     firstElement.value = 'any'
-    firstElement.innerText = 'All Genres'
+    firstElement.innerText = `All ${param}`
     optionFragment.appendChild(firstElement)
 
     for (const [id, name] of Object.entries(param)) {
