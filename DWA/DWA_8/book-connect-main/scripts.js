@@ -1,4 +1,4 @@
-import { books, authors, genres, BOOKS_PER_PAGE } from './module/data.js'
+//Imports
 
 import {
         headerSearch,
@@ -21,40 +21,60 @@ import {
         searchGenres,
         searchAuthors,
         searchCancel,
+
         settingsOverlay,
         settingsForm,
         settingsTheme,
         settingsCancel
 } from './module/html_references.js'
 
-if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    settingsTheme.value = 'night'
-    document.documentElement.style.setProperty('--color-dark', '255, 255, 255');
-    document.documentElement.style.setProperty('--color-light', '10, 10, 20');
-} else {
-    settingsTheme.value = 'day'
-    document.documentElement.style.setProperty('--color-dark', '10, 10, 20');
-    document.documentElement.style.setProperty('--color-light', '255, 255, 255');
-}
+import { 
+    setThemeBasedOnMediaQuery,
+    handleThemePreference 
+} from './module/theme.js';
+
+import { 
+    books,
+    authors,
+    genres,
+    BOOKS_PER_PAGE 
+} from './module/data.js'
+
+import { 
+    optionsForAuthors,
+    optionsForGenres 
+} from './module/domManipulator.js'
 
 
-settingsForm.addEventListener('submit', (event) => {
-    event.preventDefault()
-    const formData = new FormData(event.target)
-    const { theme } = Object.fromEntries(formData)
+import { 
+    createHTML 
+} from './module/domManipulator.js';
 
-    if (theme === 'night') {
-        document.documentElement.style.setProperty('--color-dark', '255, 255, 255');
-        document.documentElement.style.setProperty('--color-light', '10, 10, 20');
-    } else {
-        document.documentElement.style.setProperty('--color-dark', '10, 10, 20');
-        document.documentElement.style.setProperty('--color-light', '255, 255, 255');
-    }
-    
+/*---THEME FUNCTIONALITY--- */
+
+//Call the function to check the Theme set in MediaQuery
+setThemeBasedOnMediaQuery()
+
+settingsForm.addEventListener('submit', handleThemePreference)
+
+headerSettings.addEventListener('click', () => {
+    settingsOverlay.open = true 
+})
+
+settingsCancel.addEventListener('click', () => {
     settingsOverlay.open = false
 })
 
-let page = 0;
+/*---SEARCH FORM OPTION--- */
+
+optionsForAuthors
+optionsForGenres
+
+/*--- BOOK LIST-- */
+
+//The page is initially set to 0 because there are no books added yet.
+let page = 0; 
+
 let matches = books
 
 const fragment = document.createDocumentFragment()
@@ -62,40 +82,25 @@ const fragment = document.createDocumentFragment()
 /**
  * This function is used to display the 36 books at the time
  */
+
 let displayBooks = () => {
-    for (const { author, id, image, title } of matches.slice(page * BOOKS_PER_PAGE, (page + 1) * BOOKS_PER_PAGE)) {
-        const element = document.createElement('button')
-        element.classList = 'preview'
-        element.setAttribute('data-preview', id)
+    const bookRange = matches.slice(page * BOOKS_PER_PAGE, (page + 1) * BOOKS_PER_PAGE)
 
-        element.innerHTML = `
-            <img
-                class="preview__image"
-                src="${image}"
-            />
-            
-            <div class="preview__info">
-                <h3 class="preview__title">${title}</h3>
-                <div class="preview__author">${authors[author]}</div>
-            </div>
-        `
+    for (const { author, id, image, title } of bookRange ) {
+        let preview = createHTML(id, image, title, author)
+        fragment.appendChild(preview) 
 
-        fragment.appendChild(element)
     }
 
     listItems.appendChild(fragment)
 }
 
-//Add the first 36 books
-displayBooks()
-page += 1
-
-let remainingBooks = (matches.length - (page * BOOKS_PER_PAGE))
-listButton.disabled = remainingBooks < 0
-
-const showMoreButton = () => {
-
-    remainingBooks = (matches.length - (page * BOOKS_PER_PAGE))
+/**
+ * The showMoreButton updates the number of books left
+ * @property {number} remainingBooks
+ */
+const numberOfBooksRemaining = () => {
+    const remainingBooks = (matches.length - (page * BOOKS_PER_PAGE)) 
     
     listButton.innerHTML = `
         <span>Show more</span>
@@ -103,19 +108,34 @@ const showMoreButton = () => {
     `
 }
 
-// Call the function to display the of books that still to be explored.
-showMoreButton()
+const initializeFirstPage = () => {
+    //Add the first 36 books
+    const first36Books = displayBooks()
+    first36Books
 
-export let clickButtonForMOreBooks = () => {
+    //Updates the page variable to reflect the current page.
+    page = 1
+
+    // Call the function to display the of books that still to be explored.
+    numberOfBooksRemaining()
+}
+//call theFirstPage
+initializeFirstPage()
+
+export let handlerButtonForMoreBooks = () => {
     displayBooks()
     page += 1
-    showMoreButton()
+    numberOfBooksRemaining()
 }
 
-listButton.addEventListener('click', clickButtonForMOreBooks)
+listButton.addEventListener('click', handlerButtonForMoreBooks)
 
 
-listItems.addEventListener('click', (event) => {
+
+//----------------------------------------------------------
+
+
+const handlerMoreAboutTheBook =  (event) => {
     const pathArray = Array.from(event.path || event.composedPath())
     let active = null
 
@@ -129,7 +149,7 @@ listItems.addEventListener('click', (event) => {
                 if (result) break;
                 if (singleBook.id === node?.dataset?.preview) result = singleBook
             } 
-        
+
             active = result
         }
     }
@@ -141,15 +161,13 @@ listItems.addEventListener('click', (event) => {
         listSubtitle.innerText = `${authors[active.author]} (${new Date(active.published).getFullYear()})`
         listDescription.innerText = active.description
     }
-})
+}
 
-import { optionsForAuthors, optionsForGenres } from './module/domManipulator.js'
+listItems.addEventListener('click', handlerMoreAboutTheBook )
 
-optionsForAuthors
-optionsForGenres
-
-
-
+listClose.addEventListener('click', () => {
+    listActive.open = false
+})  
 
 
 
@@ -157,30 +175,15 @@ searchCancel.addEventListener('click', () => {
     searchOverlay.open = false
 })
 
-settingsCancel.addEventListener('click', () => {
-    settingsOverlay.open = false
-})
-
 headerSearch.addEventListener('click', () => {
     searchOverlay.open = true 
     searchTitle.focus()
 })
 
-headerSettings.addEventListener('click', () => {
-    settingsOverlay.open = true 
-})
-
-listClose.addEventListener('click', () => {
-    listActive.open = false
-})   
-
-
-
-
-
-
-
-searchForm.addEventListener('submit', (event) => {
+/**
+ * 
+ */
+const handlerSearchForm = (event) => {
     event.preventDefault()
     const formData = new FormData(event.target)
     const filters = Object.fromEntries(formData)
@@ -220,8 +223,10 @@ searchForm.addEventListener('submit', (event) => {
 
     listButton.disabled = (matches.length - (page * BOOKS_PER_PAGE)) < 0
 
-    showMoreButton()
+    numberOfBooksRemaining()
 
     window.scrollTo({top: 0, behavior: 'smooth'});
     searchOverlay.open = false
-})
+}
+
+searchForm.addEventListener('submit', handlerSearchForm )
