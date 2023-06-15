@@ -27,16 +27,12 @@ import {
 
 import { books, authors, genres, BOOKS_PER_PAGE } from './data.js'
 
-/**
- * fragement that hold options
- */
-
 const optionFragment = document.createDocumentFragment()
 
 /**
  * This function create options on the form for users to choose which books
  * to read.
- * @param {string} - the parameter should only be 'genres' or 'authors'
+ * @param {string} param - the parameter should only be 'genres' or 'authors'
  */
 
 let createOption = (param) => {
@@ -51,7 +47,6 @@ let createOption = (param) => {
         element.innerText = name
         optionFragment.appendChild(element)
     }
-
 }
 
 //Call the function to create options for genres
@@ -74,72 +69,31 @@ export const optionsForAuthors = searchAuthors.appendChild(optionFragment)
 
 
 
-// let page = 0;
-// let matches = books
+/**
+ * This function creates DOM elements to be used by each book 
+ * @param {string} id - the unique id generated for each book 
+ * @param {string} image - The cover page of the book
+ * @param {string} title  - The name of the of the book
+ * @param {string} author  
+ * @returns {HTMLElement}
+ */
 
+export const createHTML = (id, image, title, author) => {
+    const element = document.createElement('button')
+    element.classList = 'preview'
+    element.setAttribute('data-preview', id)
 
-// export const fragment = document.createDocumentFragment()
-// /**
-//  * This function is used to display the 36 books at the time
-//  */
-// export let displayBooks = () => {
-//     for (const { author, id, image, title } of matches.slice(page * BOOKS_PER_PAGE, (page + 1) * BOOKS_PER_PAGE)) {
-//         const element = document.createElement('button')
-//         element.classList = 'preview'
-//         element.setAttribute('data-preview', id)
+    element.innerHTML = `
+        <img
+            class="preview__image"
+            src="${image}"
+        />
+        
+        <div class="preview__info">
+            <h3 class="preview__title">${title}</h3>
+            <div class="preview__author">${authors[author]}</div>
+        </div>
+    `
 
-//         element.innerHTML = `
-//             <img
-//                 class="preview__image"
-//                 src="${image}"
-//             />
-            
-//             <div class="preview__info">
-//                 <h3 class="preview__title">${title}</h3>
-//                 <div class="preview__author">${authors[author]}</div>
-//             </div>
-//         `
-
-//         fragment.appendChild(element)
-//     }
-
-//     listItems.appendChild(fragment)
-// }
-
-
-// //------------------------------------------//
-// /*
-//  The variable and function below are used  to display the number of books left to explore 
-//  */
-
-// page += 1
-
-// let remainingBooks = (matches.length - (page * BOOKS_PER_PAGE))
-// listButton.disabled = remainingBooks < 0
-
-// export const showMoreButton = () => {
-
-//     remainingBooks = (matches.length - (page * BOOKS_PER_PAGE))
-    
-//     listButton.innerHTML = `
-//         <span>Show more</span>
-//         <span class="list__remaining"> (${ remainingBooks > 0 ? remainingBooks : 0})</span>
-//     `
-// }
-
-// export let clickButtonForMOreBooks = () => {
-//     displayBooks()
-//     page += 1
-//     showMoreButton()
-// }
-
-
-
-
-
-
-
-
-
-
-
+    return element
+}
