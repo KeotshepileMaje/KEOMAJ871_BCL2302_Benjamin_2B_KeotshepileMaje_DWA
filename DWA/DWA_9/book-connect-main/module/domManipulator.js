@@ -27,100 +27,63 @@ import {
 
 import { books, authors, genres, BOOKS_PER_PAGE } from './data.js'
 
-const optionFragment = document.createDocumentFragment()
 
-/**
- * This function create options on the form for users to choose which books
- * to read.
- * @param {string} param - the parameter should only be 'genres' or 'authors'
- */
-
-let createOption = (param) => {
-    const firstElement = document.createElement('option')
-    firstElement.value = 'any'
-    firstElement.innerText = `All ${param}`
-    optionFragment.appendChild(firstElement)
-
-    for (const [id, name] of Object.entries(param)) {
-        const element = document.createElement('option')
-        element.value = id
-        element.innerText = name
-        optionFragment.appendChild(element)
-    }
-}
-
-//Call the function to create options for genres
-createOption(genres)
-searchGenres.appendChild(optionFragment)
-
-/**
- * The genres data, from data.js is added on the search form for users to select the the books with only the genre they like.
- */
-export const optionsForGenres = searchGenres.appendChild(optionFragment)
-
-//Call the function to create options for authors
-createOption(authors)
-searchAuthors.appendChild(optionFragment)
-
-/**
- * The author data, from data.js is added on the search form for users to select the the books with only the author they like.
- */
-export const optionsForAuthors = searchAuthors.appendChild(optionFragment)
-
-
-class CreateOptions extends HTMLElement {
-    constructor () {
-        super()
-
-        this.attachShadow({ mode: 'open' })
-
-        const firstElement = document.createElement('option')
-        firstElement.value = 'any'
-        firstElement.innerText = `All ${param}`
-        optionFragment.appendChild(firstElement)
+class CreateOption extends HTMLElement {
     
-        for (const [id, name] of Object.entries(param)) {
-            const element = document.createElement('option')
-            element.value = id
-            element.innerText = name
-            optionFragment.appendChild(element)
+    constructor () {
+        const optionFragment = document.createDocumentFragment()
+
+        /**
+         * This function create options on the form for users to choose which books
+         * to read.
+         * @param {string} param - the parameter should only be 'genres' or 'authors'
+         */
+
+        let createOption = (param) => {
+            const firstElement = document.createElement('option')
+            firstElement.value = 'any'
+
+            const options = param === genres ? 'Genres' : 'Authors'
+            firstElement.innerText = `All ${options}`
+            
+            optionFragment.appendChild(firstElement)
+
+            for (const [id, name] of Object.entries(param)) {
+                const element = document.createElement('option')
+                element.value = id
+                element.innerText = name
+                optionFragment.appendChild(element)
+            }
+        }
+        
+        //Call the function to create options for genres
+        createOption(genres)
+        searchGenres.appendChild(optionFragment)
+
+        /**
+         * The genres data, from data.js is added on the search form for users to select the the books with only the genre they like.
+         */
+        const optionsForGenres = searchGenres.appendChild(optionFragment)
+
+        //Call the function to create options for authors
+        createOption(authors)
+        searchAuthors.appendChild(optionFragment)
+
+        /**
+         * The author data, from data.js is added on the search form for users to select the the books with only the author they like.
+         */
+        const optionsForAuthors = searchAuthors.appendChild(optionFragment)
+
+        return {
+            optionsForAuthors,
+            optionsForGenres
         }
 
-        
-
-        this.shadowRoot.appendChild(optionFragment)
-
-
-
     }
+
 }
 
-customElements( 'create-options', CreateOptions)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export const optionForm = new CreateOption()
 
 /**
  * This function creates DOM elements to be used by each book 
