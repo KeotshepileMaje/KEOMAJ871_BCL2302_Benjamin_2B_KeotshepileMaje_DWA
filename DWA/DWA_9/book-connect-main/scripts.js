@@ -41,14 +41,27 @@ import {
 } from './module/data.js'
 
 import { 
-    optionsForAuthors,
-    optionsForGenres 
+    optionForm
 } from './module/domManipulator.js'
 
 
 import { 
     createHTML 
 } from './module/domManipulator.js';
+
+import ListOverlay from './web-component/list-overlay.js';
+
+window.customElements.define('list-overlay', ListOverlay)
+
+console.log(document.querySelector('list-overlay'))
+
+
+
+import SetttingOverlay from './web-component/settings-overlay.js';
+
+
+window.customElements.define('setting-overlay', SetttingOverlay)
+
 
 /*---THEME FUNCTIONALITY--- */
 
@@ -66,9 +79,7 @@ settingsCancel.addEventListener('click', () => {
 })
 
 /*---SEARCH FORM OPTION--- */
-
-optionsForAuthors
-optionsForGenres
+optionForm
 
 /*--- BOOK LIST-- */
 
@@ -135,39 +146,39 @@ listButton.addEventListener('click', handlerButtonForMoreBooks)
 //----------------------------------------------------------
 
 
-const handlerMoreAboutTheBook =  (event) => {
-    const pathArray = Array.from(event.path || event.composedPath())
-    let active = null
+// const handlerMoreAboutTheBook =  (event) => {
+//     const pathArray = Array.from(event.path || event.composedPath())
+//     let active = null
 
-    for (const node of pathArray) {
-        if (active) break
+//     for (const node of pathArray) {
+//         if (active) break
 
-        if (node?.dataset?.preview) {
-            let result = null
+//         if (node?.dataset?.preview) {
+//             let result = null
     
-            for (const singleBook of books) {
-                if (result) break;
-                if (singleBook.id === node?.dataset?.preview) result = singleBook
-            } 
+//             for (const singleBook of books) {
+//                 if (result) break;
+//                 if (singleBook.id === node?.dataset?.preview) result = singleBook
+//             } 
 
-            active = result
-        }
-    }
-    if (active) {
-        listActive.open = true
-        listBlur.src = active.image
-        listImage.src = active.image
-        listTitle.innerText = active.title
-        listSubtitle.innerText = `${authors[active.author]} (${new Date(active.published).getFullYear()})`
-        listDescription.innerText = active.description
-    }
-}
+//             active = result
+//         }
+//     }
+//     if (active) {
+//         listActive.open = true
+//         listBlur.src = active.image
+//         listImage.src = active.image
+//         listTitle.innerText = active.title
+//         listSubtitle.innerText = `${authors[active.author]} (${new Date(active.published).getFullYear()})`
+//         listDescription.innerText = active.description
+//     }
+// }
 
-listItems.addEventListener('click', handlerMoreAboutTheBook )
+// listItems.addEventListener('click', handlerMoreAboutTheBook )
 
-listClose.addEventListener('click', () => {
-    listActive.open = false
-})  
+// listClose.addEventListener('click', () => {
+//     listActive.open = false
+// })  
 
 
 
