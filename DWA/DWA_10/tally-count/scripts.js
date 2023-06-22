@@ -15,7 +15,10 @@ const subtractHandler = () => {
     }
     if (newValue <= MIN_NUMBER) {
         subtract.disabled = true  
-        //subtract.style.background = 'red'
+        subtract.style.background = 'red'
+    }
+    if (newValue < 5) {
+        add.style.background = ''
     }
 }
 
@@ -29,6 +32,12 @@ const addHandler = () =>{
     } 
     if (newValue>=MAX_NUMBER) {
         add.disabled = true
+    }
+    if (newValue > -5) {
+        subtract.style.background = ''
+    }
+    if (newValue >= 4) {
+        add.style.background = 'red'
     }
 }
 subtract.addEventListener('click', subtractHandler);
