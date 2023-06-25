@@ -8,5 +8,25 @@ import {Action} from './actions.js'
  */
 
 const reducer = (state, action) => {
-    return state
+    switch (action.type) {
+        case 'ADD_TASK': {
+            return {
+                ...state,
+                tasks: {
+                    [action.task.id]: action.task,
+                    ...state.task
+                }
+            }
+        }
+        case 'CASE_SORT': {
+            return {
+                ...state,
+                filters: {
+                    ...state.filters,
+                    sorting: action.sorting
+                }
+            }
+        }
+
+    }
 }

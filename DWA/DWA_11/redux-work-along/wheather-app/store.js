@@ -16,6 +16,7 @@
  * @param {State} prev 
  */ 
 
+
 /**
  * @callback Action
  * @param {State}
@@ -79,7 +80,7 @@ export const update = (action) => {
     const prev = Object.freeze({ ...states[0]})
     const next = Object.freeze({ ...action(prev)})
 
-    const handler  = (notify) => notify(prev, next)
+    const handler  = (notify) => notify(next, prev)
     notifiers.forEach(handler)
     states.unshift(next)
 }
