@@ -15,11 +15,14 @@ globalStore.subscribe(observer);
 globalStore.dispatch(increment());
 globalStore.dispatch(increment());
 globalStore.dispatch(decrement());
-
 globalStore.dispatch(reset());
 
+globalStore.unsubscribe(observer)
 
-
+globalStore.dispatch(increment());
+globalStore.dispatch(increment());
+globalStore.dispatch(decrement());
+globalStore.dispatch(reset());
 
 
 

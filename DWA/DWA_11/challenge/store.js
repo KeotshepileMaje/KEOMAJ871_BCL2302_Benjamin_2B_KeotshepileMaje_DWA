@@ -10,24 +10,19 @@ export const createStore = (reducer) => {
         const index = observers.indexOf(observer);
         if (index !== -1) {
             observers.splice(index, 1);
-            
+        
         }
 
-        const unsubscribe = () => {
-            const handler = (current) => current !== notify
-            const result = notifiers.filter(handler)
-            notifiers = result
-        }
+    };
+
+    const notifyObservers = () => {
+        const handler = (observer) => observer(state)
+        observers.forEach(handler);
     };
 
     const dispatch = (action) => {
         state = reducer(state, action);
         notifyObservers();
-    };
-     
-    const notifyObservers = () => {
-        const handler = (observer) => observer(state)
-        observers.forEach(handler);
     };
   
     return {
