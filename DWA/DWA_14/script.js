@@ -5,34 +5,6 @@ class TallyCounter extends LitElement {
     static properties = {
         count: {type: Number},
     };
-
-    static styles = css`
-        :host {
-            display: block;
-            background-color: lightgray;
-            padding: 8px;
-        }
-        .display-options {
-            display: flex;
-        }
-        .display{
-            width: 500px;
-            height: 100px;
-        }
-        .display p {
-            position: relative;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            font-size: 5rem;
-        }
-        button {
-            width: 250px;
-            height: 150px;
-            font-size: 3rem;
-        }
-    `
  
     constructor() {
         super()
@@ -41,10 +13,20 @@ class TallyCounter extends LitElement {
 
     increment() {
         this.count++
+
+        if (this.count > 5) {
+            return console.log('Number too high')
+
+        }
     }
 
     decrement() {
+
         this.count--
+        if (this.count < -5) {
+            return console.log('Number too low')
+        }
+
     }
 
     render() {
@@ -72,8 +54,8 @@ class TallyCounter extends LitElement {
 
             <div class='interface'>
                 <div class='display'>
-                    <p>${this.count}</p>
-                    </div>
+                    <input value='${this.count}'>
+                </div>
             
                 <button  @click="${this.decrement}">-</button>
                 <button @click="${this.increment}">+</button>

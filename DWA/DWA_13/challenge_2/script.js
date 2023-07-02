@@ -5,14 +5,14 @@ const products = [
     { product: 'avocado', price: "8" },
     { product: 'coffee', price: 10 },
     { product: 'tea', price: '' },
-  ]
+]
 
-// const newProductList = products.filter(
+const newProductList = products.filter(
 
-//     ({product}) => product.length < 6
-// )
+    ({product}) => product.length < 6
+)
 
-// console.log(newProductList)
+//console.log(newProductList)
 
 const stringToNumber = products.map(
     (product) => {
@@ -35,8 +35,7 @@ const onlyPricedProduct = stringToNumber.filter(
     }
 )
 
-console.log(onlyPricedProduct)
-
+// console.log(onlyPricedProduct)
 
 const totalPrice = onlyPricedProduct.reduce(
     ( total, currentValue ) => {
@@ -45,6 +44,51 @@ const totalPrice = onlyPricedProduct.reduce(
     0
 )
 
-console.log(totalPrice)
+// console.log(totalPrice)
 
+const concatenatedString = products.reduce((accumulator, currentProduct) => {
+    if (currentProduct.product !== '') {
+        if (accumulator !== '') {
+            accumulator += ', ';
+        }
+        accumulator += currentProduct.product;
+        }
+        return accumulator;
+    }
+    , ''
+);
 
+// console.log(concatenatedString);
+
+const highestPriceItem = products.reduce((maxProduct, currentProduct) => {
+    if (currentProduct.price > maxProduct.price) {
+        return currentProduct;
+    }
+    return maxProduct;
+}).product;
+
+const lowestPriceItem = products.reduce((minProduct, currentProduct) => {
+    if (currentProduct.price < minProduct.price) {
+        return currentProduct;
+    }
+    return minProduct;
+}).product;
+  
+const resultString = `Highest: ${highestPriceItem}. Lowest: ${lowestPriceItem}.`;
+  
+// console.log(resultString);
+
+const transformedArray = Object.entries(products).reduce(
+    (newArray, [index, item]) => {
+        const newItem = {
+            name: item.product,
+            cost: item.price
+        };
+        newArray[index] = newItem;
+        return newArray;
+    }
+    ,
+    []
+);
+  
+console.log(transformedArray);

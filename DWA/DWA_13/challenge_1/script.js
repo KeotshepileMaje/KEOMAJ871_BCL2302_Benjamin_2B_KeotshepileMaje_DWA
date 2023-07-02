@@ -88,16 +88,17 @@ const names = ['Ashwin', 'Sibongile', 'Jan-Hendrik', 'Sifso', 'Shailen', 'Frikki
 
 // console.log(filterCapeOut())
 
-const createProfile = () => {
-    const objectProfile = {}
+// const result = names.map(
+//     name => name.toLowerCase().includes('s')
+// );
 
-    provinces.reduce(
-        (province, index) => {
-            objectProfile[province] = names[index]
-        }
-    )
-    
-    return objectProfile
-}
+// console.log(result);
 
-console.log(createProfile())
+const createProfileObject = () => {
+    return names.reduce((objectProfile, name, index) => {
+        objectProfile[name] = provinces[index];
+        return objectProfile;
+    }, {});
+};
+
+console.log(createProfileObject());
